@@ -1,0 +1,59 @@
+using MyRecipeBook.API.Converters;
+using MyRecipeBook.API.Filters;
+using MyRecipeBook.API.Middleware;
+using MyRecipeBook.Application;
+using MyRecipeBook.Infrastructure;
+
+var builder = WebApplication.CreateBuilder(args);
+const string bearer = "Bearer";
+var allowOrigin = new string[2]{"http://localhost:3000", "http://localhost:5000"}; 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(allowOrigin)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
+builder.Services.AddControllers().AddJsonOptions(opt => opt.JsonSerializerOptions
+    .Converters.Add(new StringConverter()));
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
+
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication(builder.Configuration);
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseMiddleware<CultureMiddleware>();
+
+app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+await app.RunAsync();
+
+
+public partial class Program
+{
+    protected Program(){}
+}
