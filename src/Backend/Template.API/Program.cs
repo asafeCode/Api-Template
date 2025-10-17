@@ -5,24 +5,12 @@ using MyRecipeBook.Application;
 using MyRecipeBook.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-const string bearer = "Bearer";
-var allowOrigin = new string[2]{"http://localhost:3000", "http://localhost:5000"}; 
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins(allowOrigin)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
-});
 
 builder.Services.AddControllers().AddJsonOptions(opt => opt.JsonSerializerOptions
     .Converters.Add(new StringConverter()));
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -43,8 +31,6 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<CultureMiddleware>();
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 

@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Template.Communication\Template.Communication.csproj" />
-    <ProjectReference Include="..\..\Shared\MyRecipeBook.Exception\Template.Exceptions.csproj" />
+    <ProjectReference Include="..\..\Shared\Template.Exceptions\Template.Exceptions.csproj" />
     <ProjectReference Include="..\Template.Domain\Template.Domain.csproj" />
   </ItemGroup>
 
